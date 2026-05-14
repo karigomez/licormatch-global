@@ -10,10 +10,10 @@ export type Bar = {
   lat: number;
   lng: number;
   rating: number;
-  ambience: Category;   // pub | club | rooftop | cocktail
-  liquor: string;       // cocktails | whisky | beer | wine | mezcal
+  ambience: Category;
+  liquor: string;
   available: boolean;
-  priceUsd: number;     // base USD per person
+  priceUsd: number;
   image: string;
   description: { es: string; en: string; pt: string; it: string; fr: string };
 };
@@ -46,75 +46,216 @@ export const CITIES: Record<CountryCode, { name: string; lat: number; lng: numbe
   ],
 };
 
-// 10 distinct names per country → combined with city for global uniqueness.
-const NAME_POOLS: Record<CountryCode, string[]> = {
-  CO: ["Andrés Carne", "La Sala", "Apache", "Cumbia Club", "El Mozo", "Octava", "Salvo Patria", "Casa Tinto", "Bar Enano", "Theatron"],
-  US: ["Velvet Room", "The Aviary", "Skybar", "Black Pearl", "Neon District", "Lost & Found", "Death & Co", "Employees Only", "Attaboy", "The Dead Rabbit"],
-  BR: ["Boteco Maré", "Casa Caipira", "Samba Lab", "Praia Lounge", "Cachaça Bar", "Vista Cristo", "Frank Bar", "Guilhotina", "SubAstor", "Tan Tan"],
-  IT: ["Aperitivo 1900", "Vino Nero", "Bar della Luna", "La Terrazza", "Speakeasy Roma", "Negroni Club", "Jerry Thomas", "Camparino", "1930", "Drink Kong"],
-  FR: ["Le Syndicat", "Bar Hemingway", "La Cave", "Moonshine", "Petite Folie", "Rooftop 8e", "Little Red Door", "Candelaria", "Bisou", "Combat"],
+// 12 unique, locally-themed bar names per city (no city suffix) — globally unique.
+// Order in each array maps to CATEGORY_CYCLE below: 4 clubs · 4 pubs · 2 rooftop · 2 cocktail.
+const NAMES_BY_CITY: Record<CountryCode, Record<string, string[]>> = {
+  CO: {
+    "Bogotá": [
+      "Theatron", "Video Club", "Armando Records", "Baum",
+      "Quiebracanto", "El Fabuloso", "La Perseverancia", "Gaira Café",
+      "Apache Rooftop", "Octava Sky",
+      "Vintrash", "Andrés DC",
+    ],
+    "Medellín": [
+      "Perro Negro", "Salón Amador", "Calle 9+1", "Bendito Seas",
+      "La Octava", "El Social", "La Pascasia", "Hijos de Borges",
+      "Envy Rooftop", "Panorama Sky",
+      "Mama Tequila", "Tinto Tinta",
+    ],
+    "Cartagena": [
+      "Bazurto Social Club", "La Movida", "Donde Fidel", "Mamallena",
+      "El Baluarte", "Casa Pestagua", "Demente", "Café del Mar",
+      "Buena Vida Rooftop", "Mirador Gastro",
+      "Alquímico", "Ávila Lounge",
+    ],
+  },
+  US: {
+    "New York": [
+      "Marquee", "House of Yes", "Output Loft", "Le Bain",
+      "The Standard Biergarten", "Employees Only", "PDT", "The Dead Rabbit",
+      "Westlight", "230 Fifth",
+      "Attaboy", "Death & Co",
+    ],
+    "Miami": [
+      "LIV Nightclub", "E11even", "Story", "Mr Jones",
+      "Sweet Liberty", "Mango's Tropical", "Bodega Taqueria", "Lost Boy",
+      "Skylight Rooftop", "Rooftop at 1 Hotel",
+      "Broken Shaker", "Better Days",
+    ],
+    "Los Angeles": [
+      "Sound Nightclub", "Avalon Hollywood", "Academy LA", "Exchange LA",
+      "Bar Marmont", "Good Times at Davey Wayne's", "No Vacancy", "Apt 503",
+      "Highlight Room", "Mama Shelter Roof",
+      "The Varnish", "EP & LP",
+    ],
+  },
+  BR: {
+    "São Paulo": [
+      "D-Edge", "Lab Club", "Caos", "Bar Brahma",
+      "Boteco São Bento", "Riviera Bar", "Caracol", "Pirajá",
+      "Rooftop FAS", "Skye Bar",
+      "Frank Bar", "SubAstor",
+    ],
+    "Rio de Janeiro": [
+      "Pista 3", "Rota 66", "Fosfobox", "Barzin",
+      "Belmonte", "Pavão Azul", "Bar Urca", "Galeria Café",
+      "Vista Cristo Sky", "Palaphita Kitch",
+      "Bar Astor Ipanema", "Aprazível",
+    ],
+    "Salvador": [
+      "Pelô Pelourinho", "Sankofa", "Comércio Alto", "Aldeia Hippie",
+      "Boteco do França", "Cantina da Lua", "Pereira Bar", "Mistura Brasil",
+      "Solar do Unhão", "Praia Lounge BA",
+      "Casa de Tereza", "Spazio Nea Salvador",
+    ],
+  },
+  IT: {
+    "Roma": [
+      "Akab Club", "Shari Vari", "Goa Club", "Spazio Novecento",
+      "Freni e Frizioni", "Il Bar del Fico", "Salotto 42", "Hotel Locarno Bar",
+      "Aroma Rooftop", "Terrazza Borromini",
+      "Jerry Thomas Speakeasy", "Drink Kong",
+    ],
+    "Milano": [
+      "Just Cavalli", "Plastic", "Tunnel Club", "Old Fashion",
+      "Bar Basso", "Camparino in Galleria", "Mag Cafè", "Nottingham Forest",
+      "Ceresio 7 Pools", "Terrazza Aperol",
+      "1930 Speakeasy", "Iter Cocktail",
+    ],
+    "Napoli": [
+      "Arenile Reload", "Duel Beat", "La Mela Club", "Galleria 19",
+      "Birba Bistrot", "Vineria San Pasquale", "Ba-Bar", "Archivio Storico",
+      "Terrazza Calabritto", "Sky Bar Romeo",
+      "L'Antiquario", "Spazio Nea",
+    ],
+  },
+  FR: {
+    "Paris": [
+      "Silencio", "Rex Club", "La Machine", "Wanderlust",
+      "Le Comptoir Général", "La Belle Époque", "Bar Hemingway", "Combat",
+      "Perchoir Marais", "Le 43 Rooftop",
+      "Little Red Door", "Candelaria",
+    ],
+    "Lyon": [
+      "Le Sucre Rooftop", "Ninkasi Gerland", "La Boîte à Bulles", "L'Officine",
+      "Le Comptoir de la Bourse", "La Cave Saint Vincent", "Soda Bar", "Mojo Bar",
+      "Mama Shelter Lyon", "Florian on the Roof",
+      "L'Antiquaire", "La Ruche",
+    ],
+    "Marseille": [
+      "Trolleybus", "Le Rooftop R2", "Le Glam", "Carlotta Club",
+      "Le Bar de la Marine", "La Caravelle", "Les Berthom", "Bistrot Plage",
+      "Toinou Rooftop", "La Friche Belle de Mai",
+      "Carry Nation", "Copperbay",
+    ],
+  },
 };
 
-// Cycle through 4 categories so every city has a balanced mix.
+// 4 club · 4 pub · 2 rooftop · 2 cocktail per city → 12 bars/city × 15 cities = 180 bars.
 const CATEGORY_CYCLE: Category[] = [
-  "pub", "club", "rooftop", "cocktail",
-  "pub", "club", "rooftop", "cocktail",
-  "pub", "club",
+  "club", "club", "club", "club",
+  "pub", "pub", "pub", "pub",
+  "rooftop", "rooftop",
+  "cocktail", "cocktail",
 ];
 
 const LIQUOR_CYCLE = [
-  "beer", "cocktails", "cocktails", "cocktails",
-  "whisky", "wine", "cocktails", "mezcal",
-  "beer", "cocktails",
+  "cocktails", "cocktails", "cocktails", "cocktails",
+  "beer", "beer", "beer", "whisky",
+  "cocktails", "wine",
+  "cocktails", "mezcal",
 ];
 
-// 10 deterministic offsets so pins spread realistically across each city.
+// 12 dispersed offsets (~1–4 km from city center) so pins spread across neighborhoods.
 const OFFSETS: Array<[number, number]> = [
-  [ 0.012,  0.010],
-  [-0.014,  0.008],
-  [ 0.006, -0.013],
-  [-0.009, -0.011],
-  [ 0.018,  0.000],
-  [-0.017, -0.004],
-  [ 0.003,  0.016],
-  [-0.005,  0.014],
-  [ 0.011, -0.007],
-  [-0.013,  0.005],
+  [ 0.022,  0.018],
+  [-0.028,  0.012],
+  [ 0.014, -0.026],
+  [-0.019, -0.022],
+  [ 0.034,  0.004],
+  [-0.031, -0.009],
+  [ 0.008,  0.031],
+  [-0.011,  0.027],
+  [ 0.025, -0.014],
+  [-0.024,  0.011],
+  [ 0.006, -0.018],
+  [-0.016,  0.005],
 ];
 
-// 30 distinct high-quality bar/club/rooftop/cocktail Unsplash photos.
-const IMAGES = [
-  "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=900&q=80",
-  "https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=900&q=80",
-  "https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=900&q=80",
-  "https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=900&q=80",
-  "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=900&q=80",
-  "https://images.unsplash.com/photo-1546171753-97d7676e4602?w=900&q=80",
-  "https://images.unsplash.com/photo-1538488881038-e252a119ace7?w=900&q=80",
-  "https://images.unsplash.com/photo-1525268323446-0505b6fe7778?w=900&q=80",
-  "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=900&q=80",
-  "https://images.unsplash.com/photo-1597290282695-edc43d0e7129?w=900&q=80",
-  "https://images.unsplash.com/photo-1544148103-0773bf10d330?w=900&q=80",
-  "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=900&q=80",
-  "https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=900&q=80",
-  "https://images.unsplash.com/photo-1566417713940-fe7c737a9ef2?w=900&q=80",
-  "https://images.unsplash.com/photo-1578474846511-04ba529f0b88?w=900&q=80",
-  "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=900&q=80",
-  "https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=900&q=80",
-  "https://images.unsplash.com/photo-1551817958-d9d86fb29431?w=900&q=80",
-  "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=900&q=80",
-  "https://images.unsplash.com/photo-1530035415911-c2e6e7e2b6b6?w=900&q=80",
-  "https://images.unsplash.com/photo-1485872299829-c673f5194813?w=900&q=80",
-  "https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=900&q=80",
-  "https://images.unsplash.com/photo-1583227122027-d2c7c0f6f50d?w=900&q=80",
-  "https://images.unsplash.com/photo-1521017432531-fbd92d768814?w=900&q=80",
-  "https://images.unsplash.com/photo-1504675099198-7023dd85f5a3?w=900&q=80",
-  "https://images.unsplash.com/photo-1574096145532-aef4f5c5b8dd?w=900&q=80",
-  "https://images.unsplash.com/photo-1481833761820-0509d3217039?w=900&q=80",
-  "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?w=900&q=80",
-  "https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=900&q=80",
-  "https://images.unsplash.com/photo-1559329007-40df8a9345d8?w=900&q=80",
-];
+// Country-coherent image pools (Unsplash). Each country has 12 distinct photos
+// that visually align with the city/country vibe (lighting, scenery, bar style).
+const IMAGES_BY_COUNTRY: Record<CountryCode, string[]> = {
+  CO: [
+    "https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=900&q=80",
+    "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=900&q=80",
+    "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=900&q=80",
+    "https://images.unsplash.com/photo-1597290282695-edc43d0e7129?w=900&q=80",
+    "https://images.unsplash.com/photo-1583227122027-d2c7c0f6f50d?w=900&q=80",
+    "https://images.unsplash.com/photo-1559329007-40df8a9345d8?w=900&q=80",
+    "https://images.unsplash.com/photo-1525268323446-0505b6fe7778?w=900&q=80",
+    "https://images.unsplash.com/photo-1574096145532-aef4f5c5b8dd?w=900&q=80",
+    "https://images.unsplash.com/photo-1538488881038-e252a119ace7?w=900&q=80",
+    "https://images.unsplash.com/photo-1546171753-97d7676e4602?w=900&q=80",
+    "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=900&q=80",
+    "https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=900&q=80",
+  ],
+  US: [
+    "https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=900&q=80",
+    "https://images.unsplash.com/photo-1566417713940-fe7c737a9ef2?w=900&q=80",
+    "https://images.unsplash.com/photo-1530035415911-c2e6e7e2b6b6?w=900&q=80",
+    "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=900&q=80",
+    "https://images.unsplash.com/photo-1485872299829-c673f5194813?w=900&q=80",
+    "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=900&q=80",
+    "https://images.unsplash.com/photo-1481833761820-0509d3217039?w=900&q=80",
+    "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?w=900&q=80",
+    "https://images.unsplash.com/photo-1544148103-0773bf10d330?w=900&q=80",
+    "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=900&q=80",
+    "https://images.unsplash.com/photo-1551817958-d9d86fb29431?w=900&q=80",
+    "https://images.unsplash.com/photo-1578474846511-04ba529f0b88?w=900&q=80",
+  ],
+  BR: [
+    "https://images.unsplash.com/photo-1521017432531-fbd92d768814?w=900&q=80",
+    "https://images.unsplash.com/photo-1504675099198-7023dd85f5a3?w=900&q=80",
+    "https://images.unsplash.com/photo-1566737236500-c8ac43014a8e?w=900&q=80",
+    "https://images.unsplash.com/photo-1515669097368-22e68427d265?w=900&q=80",
+    "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?w=900&q=80",
+    "https://images.unsplash.com/photo-1583227122027-d2c7c0f6f50d?w=900&q=80",
+    "https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=900&q=80",
+    "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=900&q=80",
+    "https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=900&q=80",
+    "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=900&q=80",
+    "https://images.unsplash.com/photo-1597290282695-edc43d0e7129?w=900&q=80",
+    "https://images.unsplash.com/photo-1559329007-40df8a9345d8?w=900&q=80",
+  ],
+  IT: [
+    "https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=900&q=80",
+    "https://images.unsplash.com/photo-1525268323446-0505b6fe7778?w=900&q=80",
+    "https://images.unsplash.com/photo-1574096145532-aef4f5c5b8dd?w=900&q=80",
+    "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=900&q=80",
+    "https://images.unsplash.com/photo-1538488881038-e252a119ace7?w=900&q=80",
+    "https://images.unsplash.com/photo-1546171753-97d7676e4602?w=900&q=80",
+    "https://images.unsplash.com/photo-1485872299829-c673f5194813?w=900&q=80",
+    "https://images.unsplash.com/photo-1481833761820-0509d3217039?w=900&q=80",
+    "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=900&q=80",
+    "https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=900&q=80",
+    "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=900&q=80",
+    "https://images.unsplash.com/photo-1551817958-d9d86fb29431?w=900&q=80",
+  ],
+  FR: [
+    "https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=900&q=80",
+    "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=900&q=80",
+    "https://images.unsplash.com/photo-1559329007-40df8a9345d8?w=900&q=80",
+    "https://images.unsplash.com/photo-1530035415911-c2e6e7e2b6b6?w=900&q=80",
+    "https://images.unsplash.com/photo-1583227122027-d2c7c0f6f50d?w=900&q=80",
+    "https://images.unsplash.com/photo-1544148103-0773bf10d330?w=900&q=80",
+    "https://images.unsplash.com/photo-1566417713940-fe7c737a9ef2?w=900&q=80",
+    "https://images.unsplash.com/photo-1485872299829-c673f5194813?w=900&q=80",
+    "https://images.unsplash.com/photo-1481833761820-0509d3217039?w=900&q=80",
+    "https://images.unsplash.com/photo-1525268323446-0505b6fe7778?w=900&q=80",
+    "https://images.unsplash.com/photo-1538488881038-e252a119ace7?w=900&q=80",
+    "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=900&q=80",
+  ],
+};
 
 const DESC_BY_CATEGORY: Record<Category, Bar["description"]> = {
   pub: {
@@ -149,17 +290,17 @@ const DESC_BY_CATEGORY: Record<Category, Bar["description"]> = {
 
 export function buildBars(): Bar[] {
   const bars: Bar[] = [];
-  let imgIdx = 0;
   (Object.keys(CITIES) as CountryCode[]).forEach((country) => {
-    CITIES[country].forEach((city) => {
-      for (let i = 0; i < 10; i++) {
-        const baseName = NAME_POOLS[country][i];
+    const imagePool = IMAGES_BY_COUNTRY[country];
+    CITIES[country].forEach((city, cityIdx) => {
+      const names = NAMES_BY_CITY[country][city.name];
+      for (let i = 0; i < 12; i++) {
         const cat = CATEGORY_CYCLE[i];
         const liq = LIQUOR_CYCLE[i];
         const [dy, dx] = OFFSETS[i];
         bars.push({
           id: `${country}-${city.name}-${i}`.replace(/\s+/g, "_"),
-          name: `${baseName} · ${city.name}`,
+          name: names[i],
           city: city.name,
           country,
           lat: city.lat + dy,
@@ -169,7 +310,7 @@ export function buildBars(): Bar[] {
           liquor: liq,
           available: i % 5 !== 0,
           priceUsd: 12 + ((i * 5) % 45),
-          image: IMAGES[imgIdx++ % IMAGES.length],
+          image: imagePool[(cityIdx * 4 + i) % imagePool.length],
           description: DESC_BY_CATEGORY[cat],
         });
       }
