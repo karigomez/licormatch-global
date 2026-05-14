@@ -33,7 +33,7 @@ function MapPage() {
 
   return (
     <div className="fixed inset-0 mx-auto max-w-md">
-      <MapView bars={bars} center={{lat: currentCity.lat, lng: currentCity.lng}} onPinClick={(b)=>setActive(b)} />
+      <MapView bars={bars} center={{lat: currentCity.lat, lng: currentCity.lng}} popup={popup} onPinClick={(b)=>setActive(b)} />
 
       {/* Top overlay */}
       <div className="absolute top-0 left-0 right-0 p-4 pt-10 pointer-events-none">
