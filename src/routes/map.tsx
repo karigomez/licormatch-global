@@ -3,9 +3,9 @@ import { useMemo, useState } from "react";
 import { ChevronDown, Star, MapPin } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocale } from "@/lib/locale-context";
-import { COUNTRIES } from "@/lib/i18n";
+import { COUNTRIES, formatPrice } from "@/lib/i18n";
 import { BARS, CITIES } from "@/lib/bars-data";
-import { MapView } from "@/components/MapView";
+import { MapView, type MapPopup } from "@/components/MapView";
 import { CountryDrawer } from "@/components/CountryDrawer";
 import { ReservationModal } from "@/components/ReservationModal";
 import type { Bar } from "@/lib/bars-data";
@@ -23,9 +23,17 @@ function MapPage() {
   const currentCity = cities.find(c => c.name === city) ?? cities[0];
   const bars = useMemo(() => BARS.filter(b => b.country === country && b.city === currentCity.name), [country, currentCity.name]);
 
+  const popup: MapPopup = useMemo(() => ({
+    ratingLabel: t("rating"),
+    reserveLabel: t("reserveNow"),
+    categoryLabel: (b) => t(b.ambience),
+    priceLabel: (b) => `${formatPrice(b.priceUsd, country)}${t("perPerson")}`,
+    onReserve: (b) => { setActive(b); setModal(true); },
+  }), [t, country]);
+
   return (
     <div className="fixed inset-0 mx-auto max-w-md">
-      <MapView bars={bars} center={{lat: currentCity.lat, lng: currentCity.lng}} onPinClick={(b)=>setActive(b)} />
+      <MapView bars={bars} center={{lat: currentCity.lat, lng: currentCity.lng}} popup={popup} onPinClick={(b)=>setActive(b)} />
 
       {/* Top overlay */}
       <div className="absolute top-0 left-0 right-0 p-4 pt-10 pointer-events-none">

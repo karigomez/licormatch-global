@@ -1,5 +1,7 @@
 import type { CountryCode } from "./i18n";
 
+export type Category = "pub" | "club" | "rooftop" | "cocktail";
+
 export type Bar = {
   id: string;
   name: string;
@@ -8,10 +10,10 @@ export type Bar = {
   lat: number;
   lng: number;
   rating: number;
-  ambience: string; // key: chill | dance | rooftop | speakeasy | live
-  liquor: string; // key: cocktails | whisky | beer | wine | mezcal
+  ambience: Category;   // pub | club | rooftop | cocktail
+  liquor: string;       // cocktails | whisky | beer | wine | mezcal
   available: boolean;
-  priceUsd: number; // base USD per person
+  priceUsd: number;     // base USD per person
   image: string;
   description: { es: string; en: string; pt: string; it: string; fr: string };
 };
@@ -44,95 +46,131 @@ export const CITIES: Record<CountryCode, { name: string; lat: number; lng: numbe
   ],
 };
 
+// 10 distinct names per country → combined with city for global uniqueness.
 const NAME_POOLS: Record<CountryCode, string[]> = {
-  CO: ["Andrés Carne", "La Sala", "Apache", "Cumbia Club", "El Mozo", "Octava"],
-  US: ["Velvet Room", "The Aviary", "Skybar", "Black Pearl", "Neon District", "Lost & Found"],
-  BR: ["Boteco Maré", "Casa Caipira", "Samba Lab", "Praia Lounge", "Cachaça Bar", "Vista Cristo"],
-  IT: ["Aperitivo 1900", "Vino Nero", "Bar della Luna", "La Terrazza", "Speakeasy Roma", "Negroni Club"],
-  FR: ["Le Syndicat", "Bar Hemingway", "La Cave", "Moonshine", "Petite Folie", "Rooftop 8e"],
+  CO: ["Andrés Carne", "La Sala", "Apache", "Cumbia Club", "El Mozo", "Octava", "Salvo Patria", "Casa Tinto", "Bar Enano", "Theatron"],
+  US: ["Velvet Room", "The Aviary", "Skybar", "Black Pearl", "Neon District", "Lost & Found", "Death & Co", "Employees Only", "Attaboy", "The Dead Rabbit"],
+  BR: ["Boteco Maré", "Casa Caipira", "Samba Lab", "Praia Lounge", "Cachaça Bar", "Vista Cristo", "Frank Bar", "Guilhotina", "SubAstor", "Tan Tan"],
+  IT: ["Aperitivo 1900", "Vino Nero", "Bar della Luna", "La Terrazza", "Speakeasy Roma", "Negroni Club", "Jerry Thomas", "Camparino", "1930", "Drink Kong"],
+  FR: ["Le Syndicat", "Bar Hemingway", "La Cave", "Moonshine", "Petite Folie", "Rooftop 8e", "Little Red Door", "Candelaria", "Bisou", "Combat"],
 };
 
-const AMBIENCES = ["rooftop", "speakeasy", "dance", "chill", "live", "rooftop"];
-const LIQUORS = ["cocktails", "whisky", "wine", "mezcal", "beer", "cocktails"];
-
-const IMAGES = [
-  "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=800&q=80",
-  "https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=800&q=80",
-  "https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=800&q=80",
-  "https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=800&q=80",
-  "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=800&q=80",
-  "https://images.unsplash.com/photo-1546171753-97d7676e4602?w=800&q=80",
-  "https://images.unsplash.com/photo-1538488881038-e252a119ace7?w=800&q=80",
-  "https://images.unsplash.com/photo-1525268323446-0505b6fe7778?w=800&q=80",
-  "https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=800&q=80",
-  "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=800&q=80",
-  "https://images.unsplash.com/photo-1597290282695-edc43d0e7129?w=800&q=80",
-  "https://images.unsplash.com/photo-1544148103-0773bf10d330?w=800&q=80",
+// Cycle through 4 categories so every city has a balanced mix.
+const CATEGORY_CYCLE: Category[] = [
+  "pub", "club", "rooftop", "cocktail",
+  "pub", "club", "rooftop", "cocktail",
+  "pub", "club",
 ];
 
-const DESC_BY_AMBIENCE: Record<string, Bar["description"]> = {
+const LIQUOR_CYCLE = [
+  "beer", "cocktails", "cocktails", "cocktails",
+  "whisky", "wine", "cocktails", "mezcal",
+  "beer", "cocktails",
+];
+
+// 10 deterministic offsets so pins spread realistically across each city.
+const OFFSETS: Array<[number, number]> = [
+  [ 0.012,  0.010],
+  [-0.014,  0.008],
+  [ 0.006, -0.013],
+  [-0.009, -0.011],
+  [ 0.018,  0.000],
+  [-0.017, -0.004],
+  [ 0.003,  0.016],
+  [-0.005,  0.014],
+  [ 0.011, -0.007],
+  [-0.013,  0.005],
+];
+
+// 30 distinct high-quality bar/club/rooftop/cocktail Unsplash photos.
+const IMAGES = [
+  "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=900&q=80",
+  "https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=900&q=80",
+  "https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=900&q=80",
+  "https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=900&q=80",
+  "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=900&q=80",
+  "https://images.unsplash.com/photo-1546171753-97d7676e4602?w=900&q=80",
+  "https://images.unsplash.com/photo-1538488881038-e252a119ace7?w=900&q=80",
+  "https://images.unsplash.com/photo-1525268323446-0505b6fe7778?w=900&q=80",
+  "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=900&q=80",
+  "https://images.unsplash.com/photo-1597290282695-edc43d0e7129?w=900&q=80",
+  "https://images.unsplash.com/photo-1544148103-0773bf10d330?w=900&q=80",
+  "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=900&q=80",
+  "https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=900&q=80",
+  "https://images.unsplash.com/photo-1566417713940-fe7c737a9ef2?w=900&q=80",
+  "https://images.unsplash.com/photo-1578474846511-04ba529f0b88?w=900&q=80",
+  "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=900&q=80",
+  "https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=900&q=80",
+  "https://images.unsplash.com/photo-1551817958-d9d86fb29431?w=900&q=80",
+  "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=900&q=80",
+  "https://images.unsplash.com/photo-1530035415911-c2e6e7e2b6b6?w=900&q=80",
+  "https://images.unsplash.com/photo-1485872299829-c673f5194813?w=900&q=80",
+  "https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=900&q=80",
+  "https://images.unsplash.com/photo-1583227122027-d2c7c0f6f50d?w=900&q=80",
+  "https://images.unsplash.com/photo-1521017432531-fbd92d768814?w=900&q=80",
+  "https://images.unsplash.com/photo-1504675099198-7023dd85f5a3?w=900&q=80",
+  "https://images.unsplash.com/photo-1574096145532-aef4f5c5b8dd?w=900&q=80",
+  "https://images.unsplash.com/photo-1481833761820-0509d3217039?w=900&q=80",
+  "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?w=900&q=80",
+  "https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=900&q=80",
+  "https://images.unsplash.com/photo-1559329007-40df8a9345d8?w=900&q=80",
+];
+
+const DESC_BY_CATEGORY: Record<Category, Bar["description"]> = {
+  pub: {
+    es: "Pub auténtico con cervezas artesanales y ambiente local.",
+    en: "Authentic pub with craft beers and a local crowd.",
+    pt: "Pub autêntico com cervejas artesanais e clima local.",
+    it: "Pub autentico con birre artigianali e atmosfera locale.",
+    fr: "Pub authentique avec bières artisanales et ambiance locale.",
+  },
+  club: {
+    es: "Discoteca con DJs internacionales y pista hasta el amanecer.",
+    en: "Nightclub with international DJs and a dance floor until dawn.",
+    pt: "Discoteca com DJs internacionais e pista até o amanhecer.",
+    it: "Discoteca con DJ internazionali e pista fino all'alba.",
+    fr: "Discothèque avec DJs internationaux et piste jusqu'à l'aube.",
+  },
   rooftop: {
-    es: "Terraza con vistas panorámicas y cócteles de autor.",
-    en: "Rooftop with panoramic views and signature cocktails.",
-    pt: "Cobertura com vistas panorâmicas e coquetéis autorais.",
-    it: "Terrazza con vista panoramica e cocktail d'autore.",
-    fr: "Rooftop avec vue panoramique et cocktails signature.",
+    es: "Terraza panorámica con vistas a la ciudad y cócteles de autor.",
+    en: "Panoramic rooftop with city views and signature cocktails.",
+    pt: "Cobertura panorâmica com vista da cidade e coquetéis autorais.",
+    it: "Terrazza panoramica con vista sulla città e cocktail d'autore.",
+    fr: "Rooftop panoramique avec vue sur la ville et cocktails signature.",
   },
-  speakeasy: {
-    es: "Bar oculto, atmósfera íntima y mixología clásica.",
-    en: "Hidden bar with intimate vibe and classic mixology.",
-    pt: "Bar escondido, atmosfera intimista e mixologia clássica.",
-    it: "Bar nascosto, atmosfera intima e mixology classica.",
-    fr: "Bar caché, ambiance intime et mixologie classique.",
-  },
-  dance: {
-    es: "Pista vibrante, DJs en vivo hasta el amanecer.",
-    en: "Vibrant dance floor, live DJs until dawn.",
-    pt: "Pista vibrante, DJs ao vivo até o amanhecer.",
-    it: "Pista vibrante, DJ dal vivo fino all'alba.",
-    fr: "Piste vibrante, DJs jusqu'à l'aube.",
-  },
-  chill: {
-    es: "Ambiente relajado, ideal para conversar con amigos.",
-    en: "Laid-back vibe, perfect for hanging with friends.",
-    pt: "Ambiente tranquilo, ideal para conversar com amigos.",
-    it: "Atmosfera rilassata, ideale per chiacchierare con gli amici.",
-    fr: "Ambiance détendue, idéale pour discuter entre amis.",
-  },
-  live: {
-    es: "Música en vivo todas las noches, jazz y soul.",
-    en: "Live music every night, jazz and soul.",
-    pt: "Música ao vivo todas as noites, jazz e soul.",
-    it: "Musica dal vivo tutte le sere, jazz e soul.",
-    fr: "Musique live tous les soirs, jazz et soul.",
+  cocktail: {
+    es: "Bar de cocteles de autor con mixología premiada.",
+    en: "Signature cocktail bar with award-winning mixology.",
+    pt: "Bar de coquetéis autorais com mixologia premiada.",
+    it: "Cocktail bar d'autore con mixology premiata.",
+    fr: "Bar à cocktails d'auteur avec mixologie primée.",
   },
 };
 
 export function buildBars(): Bar[] {
   const bars: Bar[] = [];
+  let imgIdx = 0;
   (Object.keys(CITIES) as CountryCode[]).forEach((country) => {
     CITIES[country].forEach((city) => {
-      for (let i = 0; i < 6; i++) {
-        const name = NAME_POOLS[country][i];
-        const amb = AMBIENCES[i];
-        const liq = LIQUORS[i];
-        // small offset for pin spread
-        const dx = (Math.sin(i * 1.7) * 0.012);
-        const dy = (Math.cos(i * 2.3) * 0.012);
+      for (let i = 0; i < 10; i++) {
+        const baseName = NAME_POOLS[country][i];
+        const cat = CATEGORY_CYCLE[i];
+        const liq = LIQUOR_CYCLE[i];
+        const [dy, dx] = OFFSETS[i];
         bars.push({
           id: `${country}-${city.name}-${i}`.replace(/\s+/g, "_"),
-          name,
+          name: `${baseName} · ${city.name}`,
           city: city.name,
           country,
           lat: city.lat + dy,
           lng: city.lng + dx,
-          rating: Math.round((4.2 + ((i * 7) % 8) / 10) * 10) / 10,
-          ambience: amb,
+          rating: Math.round((4.0 + ((i * 7 + city.name.length) % 10) / 10) * 10) / 10,
+          ambience: cat,
           liquor: liq,
-          available: i % 4 !== 0,
-          priceUsd: 12 + i * 4,
-          image: IMAGES[(i + city.name.length) % IMAGES.length],
-          description: DESC_BY_AMBIENCE[amb],
+          available: i % 5 !== 0,
+          priceUsd: 12 + ((i * 5) % 45),
+          image: IMAGES[imgIdx++ % IMAGES.length],
+          description: DESC_BY_CATEGORY[cat],
         });
       }
     });
