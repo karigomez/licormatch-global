@@ -37,6 +37,7 @@ export const TRANSLATIONS: Record<Lang, Dict> = {
     tagline: "Encuentra tu noche perfecta",
     needLogin: "Inicia sesión para reservar", reserveNow: "Reservar ahora",
     perPerson: "/persona", releasing: "Liberando mesa…", integrityOk: "Integridad mantenida",
+    seeMoreReserve: "Ver más detalles / Reservar", menu: "Menú destacado", gallery: "Galería", description: "Sobre el lugar", openHours: "Horario", back: "Atrás", startReservation: "Iniciar Reserva",
   },
   en: {
     explore: "Explore", map: "Map", reservations: "Bookings", profile: "Profile",
@@ -63,6 +64,7 @@ export const TRANSLATIONS: Record<Lang, Dict> = {
     tagline: "Find your perfect night",
     needLogin: "Sign in to book", reserveNow: "Book now",
     perPerson: "/person", releasing: "Releasing table…", integrityOk: "Integrity maintained",
+    seeMoreReserve: "See more details / Book", menu: "Featured menu", gallery: "Gallery", description: "About the venue", openHours: "Hours", back: "Back", startReservation: "Start Reservation",
   },
   pt: {
     explore: "Explorar", map: "Mapa", reservations: "Reservas", profile: "Perfil",
@@ -89,6 +91,7 @@ export const TRANSLATIONS: Record<Lang, Dict> = {
     tagline: "Encontre sua noite perfeita",
     needLogin: "Entre para reservar", reserveNow: "Reservar agora",
     perPerson: "/pessoa", releasing: "Liberando mesa…", integrityOk: "Integridade mantida",
+    seeMoreReserve: "Ver detalhes / Reservar", menu: "Menu destacado", gallery: "Galeria", description: "Sobre o lugar", openHours: "Horário", back: "Voltar", startReservation: "Iniciar Reserva",
   },
   it: {
     explore: "Esplora", map: "Mappa", reservations: "Prenotazioni", profile: "Profilo",
@@ -115,6 +118,7 @@ export const TRANSLATIONS: Record<Lang, Dict> = {
     tagline: "Trova la tua serata perfetta",
     needLogin: "Accedi per prenotare", reserveNow: "Prenota ora",
     perPerson: "/persona", releasing: "Rilascio tavolo…", integrityOk: "Integrità mantenuta",
+    seeMoreReserve: "Vedi dettagli / Prenota", menu: "Menu in evidenza", gallery: "Galleria", description: "Sul locale", openHours: "Orari", back: "Indietro", startReservation: "Avvia Prenotazione",
   },
   fr: {
     explore: "Explorer", map: "Carte", reservations: "Réservations", profile: "Profil",
@@ -141,6 +145,7 @@ export const TRANSLATIONS: Record<Lang, Dict> = {
     tagline: "Trouvez votre soirée parfaite",
     needLogin: "Connectez-vous pour réserver", reserveNow: "Réserver maintenant",
     perPerson: "/personne", releasing: "Libération de la table…", integrityOk: "Intégrité maintenue",
+    seeMoreReserve: "Voir détails / Réserver", menu: "Menu phare", gallery: "Galerie", description: "À propos du lieu", openHours: "Horaires", back: "Retour", startReservation: "Démarrer la Réservation",
   },
 };
 
