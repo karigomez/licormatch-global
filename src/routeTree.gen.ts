@@ -14,6 +14,7 @@ import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BarBarIdRouteImport } from './routes/bar.$barId'
 
 const ReservationsRoute = ReservationsRouteImport.update({
   id: '/reservations',
@@ -40,6 +41,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BarBarIdRoute = BarBarIdRouteImport.update({
+  id: '/bar/$barId',
+  path: '/bar/$barId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/map': typeof MapRoute
   '/profile': typeof ProfileRoute
   '/reservations': typeof ReservationsRoute
+  '/bar/$barId': typeof BarBarIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/map': typeof MapRoute
   '/profile': typeof ProfileRoute
   '/reservations': typeof ReservationsRoute
+  '/bar/$barId': typeof BarBarIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +70,27 @@ export interface FileRoutesById {
   '/map': typeof MapRoute
   '/profile': typeof ProfileRoute
   '/reservations': typeof ReservationsRoute
+  '/bar/$barId': typeof BarBarIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/map' | '/profile' | '/reservations'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/map'
+    | '/profile'
+    | '/reservations'
+    | '/bar/$barId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/map' | '/profile' | '/reservations'
-  id: '__root__' | '/' | '/login' | '/map' | '/profile' | '/reservations'
+  to: '/' | '/login' | '/map' | '/profile' | '/reservations' | '/bar/$barId'
+  id:
+    | '__root__'
+    | '/'
+    | '/login'
+    | '/map'
+    | '/profile'
+    | '/reservations'
+    | '/bar/$barId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -77,6 +99,7 @@ export interface RootRouteChildren {
   MapRoute: typeof MapRoute
   ProfileRoute: typeof ProfileRoute
   ReservationsRoute: typeof ReservationsRoute
+  BarBarIdRoute: typeof BarBarIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -116,6 +139,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/bar/$barId': {
+      id: '/bar/$barId'
+      path: '/bar/$barId'
+      fullPath: '/bar/$barId'
+      preLoaderRoute: typeof BarBarIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -125,7 +155,18 @@ const rootRouteChildren: RootRouteChildren = {
   MapRoute: MapRoute,
   ProfileRoute: ProfileRoute,
   ReservationsRoute: ReservationsRoute,
+  BarBarIdRoute: BarBarIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
