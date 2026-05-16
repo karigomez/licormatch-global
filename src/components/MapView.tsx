@@ -27,7 +27,7 @@ function writeSaved(key: string | undefined, v: SavedView) {
 
 const PIN_HTML = `
 <div class="bar-pin-wrap">
-  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg viewBox="0 0 24 24" width="30" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M5 3h14l-1.5 7a5.5 5.5 0 0 1-4 4.3V19h3v2H7.5v-2h3v-4.7a5.5 5.5 0 0 1-4-4.3L5 3z"
       stroke="#0a0a0c" stroke-width="1.5" stroke-linejoin="round"
       fill="url(#g)"/>
