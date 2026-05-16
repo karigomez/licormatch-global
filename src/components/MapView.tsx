@@ -117,8 +117,8 @@ export function MapView({ bars, center, zoom = 13, onPinClick, viewKey }: Props)
       const icon = L.divIcon({
         className: "",
         html: PIN_HTML,
-        iconSize: [34, 42],
-        iconAnchor: [17, 38],
+        iconSize: [48, 58],
+        iconAnchor: [24, 52],
       });
       const marker = L.marker([bar.lat, bar.lng], { icon }).addTo(map);
       marker.on("click", () => onClickRef.current?.(bar));
