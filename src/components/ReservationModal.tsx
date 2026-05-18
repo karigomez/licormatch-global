@@ -74,12 +74,12 @@ export function ReservationModal({ bar, open, onClose, forceRollback = false }: 
       {open && bar && (
         <>
           <motion.div
-            className="fixed inset-0 z-[70] bg-black/80 backdrop-blur-sm"
+            className="fixed inset-0 z-[1100] bg-black/85 backdrop-blur-md"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             onClick={phase === "form" ? handleClose : undefined}
           />
           <motion.div
-            className="fixed bottom-0 left-0 right-0 z-[71] glass-strong rounded-t-3xl border-t border-border p-5 pb-10"
+            className="fixed bottom-0 left-1/2 -translate-x-1/2 z-[1101] w-full max-w-md glass-strong rounded-t-3xl border-t border-border p-5 pb-10"
             initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 28, stiffness: 280 }}
           >
