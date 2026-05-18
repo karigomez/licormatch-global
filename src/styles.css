@@ -134,6 +134,9 @@
 
 /* Leaflet dark theme overrides — invert + hue-rotate so OSM tiles match Deep Night */
 .leaflet-container { background: #0a0a0c !important; }
+/* CRITICAL: isolate the map so leaflet's internal panes (z-index 200..700)
+   can't overlay drawers/modals rendered as siblings in the same parent. */
+.lm-map { isolation: isolate; position: absolute; z-index: 0; }
 .lm-map .leaflet-tile-pane {
   filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9) saturate(0.85);
 }
