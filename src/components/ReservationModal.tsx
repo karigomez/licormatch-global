@@ -18,14 +18,32 @@ export function ReservationModal({ bar, open, onClose, forceRollback = false }: 
   const [phase, setPhase] = useState<Phase>("form");
   const [guests, setGuests] = useState(2);
   const [time, setTime] = useState("21:00");
-  const [date, setDate] = useState(() => new Date().toISOString().split("T")[0]);
+  const today = new Date().toISOString().split("T")[0];
+  const [date, setDate] = useState(today);
+  const [dateError, setDateError] = useState<string | null>(null);
 
-  const reset = () => { setPhase("form"); setGuests(2); setTime("21:00"); };
+  const dateErrorMsg: Record<string, string> = {
+    es: "Fecha no válida. Las reservas distribuidas deben ser para el presente o futuro.",
+    en: "Invalid date. Distributed bookings must be for today or a future date.",
+    pt: "Data inválida. As reservas distribuídas devem ser para hoje ou no futuro.",
+    it: "Data non valida. Le prenotazioni distribuite devono essere per oggi o nel futuro.",
+    fr: "Date invalide. Les réservations distribuées doivent être pour aujourd'hui ou une date future.",
+  };
+
+  const isPast = (d: string) => d < today;
+
+  const onDateChange = (v: string) => {
+    setDate(v);
+    setDateError(isPast(v) ? (dateErrorMsg[lang] ?? dateErrorMsg.en) : null);
+  };
+
+  const reset = () => { setPhase("form"); setGuests(2); setTime("21:00"); setDate(today); setDateError(null); };
 
   const handleClose = () => { reset(); onClose(); };
 
   const handleConfirm = async () => {
     if (!bar || !user) return;
+    if (isPast(date)) { setDateError(dateErrorMsg[lang] ?? dateErrorMsg.en); return; }
     setPhase("syncing");
     // simulate distributed node latency
     await new Promise((r) => setTimeout(r, 1800));
@@ -74,12 +92,12 @@ export function ReservationModal({ bar, open, onClose, forceRollback = false }: 
       {open && bar && (
         <>
           <motion.div
-            className="fixed inset-0 z-[70] bg-black/80 backdrop-blur-sm"
+            className="fixed inset-0 z-[1100] bg-black/85 backdrop-blur-md"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             onClick={phase === "form" ? handleClose : undefined}
           />
           <motion.div
-            className="fixed bottom-0 left-0 right-0 z-[71] glass-strong rounded-t-3xl border-t border-border p-5 pb-10"
+            className="fixed bottom-0 left-1/2 -translate-x-1/2 z-[1101] w-full max-w-md glass-strong rounded-t-3xl border-t border-border p-5 pb-10"
             initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 28, stiffness: 280 }}
           >
@@ -111,20 +129,26 @@ export function ReservationModal({ bar, open, onClose, forceRollback = false }: 
                       </Field>
                       <div className="grid grid-cols-2 gap-3">
                         <Field icon={<Calendar size={16}/>} label={t("date")}>
-                          <input type="date" value={date} onChange={e=>setDate(e.target.value)}
-                            className="w-full bg-input/50 border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[var(--neon-violet)]"/>
+                          <input type="date" value={date} min={today} onChange={e=>onDateChange(e.target.value)}
+                            className={`w-full bg-input/50 border rounded-xl px-3 py-2 text-sm focus:outline-none ${dateError ? "border-destructive focus:border-destructive" : "border-border focus:border-[var(--neon-violet)]"}`}/>
                         </Field>
                         <Field icon={<Clock size={16}/>} label={t("time")}>
                           <input type="time" value={time} onChange={e=>setTime(e.target.value)}
                             className="w-full bg-input/50 border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[var(--neon-violet)]"/>
                         </Field>
                       </div>
+                      {dateError && (
+                        <p className="text-xs text-destructive flex items-start gap-1.5 -mt-1">
+                          <AlertTriangle size={12} className="mt-0.5 shrink-0"/> {dateError}
+                        </p>
+                      )}
                     </div>
                     <div className="flex items-center justify-between mb-4 pb-4 border-b border-border">
                       <span className="text-sm text-muted-foreground">Total</span>
                       <span className="text-2xl font-bold gradient-text">{formatPrice(total, country)}</span>
                     </div>
-                    <button onClick={handleConfirm} className="w-full btn-neon py-3.5 text-base">{t("confirm")}</button>
+                    <button onClick={handleConfirm} disabled={!!dateError}
+                      className="w-full btn-neon py-3.5 text-base disabled:opacity-50 disabled:cursor-not-allowed">{t("confirm")}</button>
                   </>
                 )}
               </>

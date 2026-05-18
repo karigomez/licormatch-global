@@ -5,6 +5,7 @@ import { BARS, type Bar } from "@/lib/bars-data";
 import { useLocale } from "@/lib/locale-context";
 import { COUNTRIES, formatPrice, type CountryCode } from "@/lib/i18n";
 import { ReservationModal } from "@/components/ReservationModal";
+import { BarReviews } from "@/components/BarReviews";
 
 export const Route = createFileRoute("/bar/$barId")({
   component: BarDetailPage,
@@ -22,6 +23,7 @@ function BarDetailPage() {
   const { t, country, lang } = useLocale();
   const navigate = useNavigate();
   const [reserveOpen, setReserveOpen] = useState(false);
+  const [liveRating, setLiveRating] = useState<number | null>(null);
 
   const gallery = useMemo(() => buildGallery(bar), [bar]);
   const menu = useMemo(() => bar ? buildMenu(bar, country) : [], [bar, country]);
@@ -53,7 +55,7 @@ function BarDetailPage() {
         </button>
         <div className="absolute bottom-4 left-4 right-4">
           <div className="flex items-center gap-2 text-xs text-[var(--neon-cyan)] mb-1">
-            <Star size={12} fill="currentColor" />{bar.rating}
+            <Star size={12} fill="currentColor" />{(liveRating ?? bar.rating).toFixed(1)}
             <span className="text-muted-foreground">·</span>
             <span className="text-muted-foreground flex items-center gap-1"><MapPin size={11} />{bar.city}, {COUNTRIES[bar.country].name}</span>
           </div>
@@ -108,6 +110,13 @@ function BarDetailPage() {
             ))}
           </div>
         </section>
+
+        {/* Reviews */}
+        <BarReviews
+          barId={bar.id}
+          fallbackRating={bar.rating}
+          onAverageChange={(avg) => setLiveRating(avg)}
+        />
       </div>
 
       {/* Sticky CTA */}

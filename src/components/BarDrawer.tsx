@@ -27,13 +27,13 @@ export function BarDrawer({
       {open && bar && (
         <>
           <motion.div
-            className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm"
+            className="fixed inset-0 z-[1000] bg-black/70 backdrop-blur-sm"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             onClick={onClose}
           />
           <motion.div
             key={bar.id}
-            className="fixed bottom-0 left-1/2 -translate-x-1/2 z-[61] w-full max-w-md glass-strong rounded-t-3xl border-t border-border overflow-hidden"
+            className="fixed bottom-0 left-1/2 -translate-x-1/2 z-[1001] w-full max-w-md glass-strong rounded-t-3xl border-t border-border overflow-hidden"
             initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 280 }}
           >
