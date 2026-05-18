@@ -18,9 +18,26 @@ export function ReservationModal({ bar, open, onClose, forceRollback = false }: 
   const [phase, setPhase] = useState<Phase>("form");
   const [guests, setGuests] = useState(2);
   const [time, setTime] = useState("21:00");
-  const [date, setDate] = useState(() => new Date().toISOString().split("T")[0]);
+  const today = new Date().toISOString().split("T")[0];
+  const [date, setDate] = useState(today);
+  const [dateError, setDateError] = useState<string | null>(null);
 
-  const reset = () => { setPhase("form"); setGuests(2); setTime("21:00"); };
+  const dateErrorMsg: Record<string, string> = {
+    es: "Fecha no válida. Las reservas distribuidas deben ser para el presente o futuro.",
+    en: "Invalid date. Distributed bookings must be for today or a future date.",
+    pt: "Data inválida. As reservas distribuídas devem ser para hoje ou no futuro.",
+    it: "Data non valida. Le prenotazioni distribuite devono essere per oggi o nel futuro.",
+    fr: "Date invalide. Les réservations distribuées doivent être pour aujourd'hui ou une date future.",
+  };
+
+  const isPast = (d: string) => d < today;
+
+  const onDateChange = (v: string) => {
+    setDate(v);
+    setDateError(isPast(v) ? (dateErrorMsg[lang] ?? dateErrorMsg.en) : null);
+  };
+
+  const reset = () => { setPhase("form"); setGuests(2); setTime("21:00"); setDate(today); setDateError(null); };
 
   const handleClose = () => { reset(); onClose(); };
 
