@@ -5,6 +5,7 @@ import { BARS, type Bar } from "@/lib/bars-data";
 import { useLocale } from "@/lib/locale-context";
 import { COUNTRIES, formatPrice, type CountryCode } from "@/lib/i18n";
 import { ReservationModal } from "@/components/ReservationModal";
+import { BarReviews } from "@/components/BarReviews";
 
 export const Route = createFileRoute("/bar/$barId")({
   component: BarDetailPage,
