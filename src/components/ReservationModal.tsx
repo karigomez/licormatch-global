@@ -43,6 +43,7 @@ export function ReservationModal({ bar, open, onClose, forceRollback = false }: 
 
   const handleConfirm = async () => {
     if (!bar || !user) return;
+    if (isPast(date)) { setDateError(dateErrorMsg[lang] ?? dateErrorMsg.en); return; }
     setPhase("syncing");
     // simulate distributed node latency
     await new Promise((r) => setTimeout(r, 1800));
