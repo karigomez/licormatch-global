@@ -129,20 +129,26 @@ export function ReservationModal({ bar, open, onClose, forceRollback = false }: 
                       </Field>
                       <div className="grid grid-cols-2 gap-3">
                         <Field icon={<Calendar size={16}/>} label={t("date")}>
-                          <input type="date" value={date} onChange={e=>setDate(e.target.value)}
-                            className="w-full bg-input/50 border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[var(--neon-violet)]"/>
+                          <input type="date" value={date} min={today} onChange={e=>onDateChange(e.target.value)}
+                            className={`w-full bg-input/50 border rounded-xl px-3 py-2 text-sm focus:outline-none ${dateError ? "border-destructive focus:border-destructive" : "border-border focus:border-[var(--neon-violet)]"}`}/>
                         </Field>
                         <Field icon={<Clock size={16}/>} label={t("time")}>
                           <input type="time" value={time} onChange={e=>setTime(e.target.value)}
                             className="w-full bg-input/50 border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[var(--neon-violet)]"/>
                         </Field>
                       </div>
+                      {dateError && (
+                        <p className="text-xs text-destructive flex items-start gap-1.5 -mt-1">
+                          <AlertTriangle size={12} className="mt-0.5 shrink-0"/> {dateError}
+                        </p>
+                      )}
                     </div>
                     <div className="flex items-center justify-between mb-4 pb-4 border-b border-border">
                       <span className="text-sm text-muted-foreground">Total</span>
                       <span className="text-2xl font-bold gradient-text">{formatPrice(total, country)}</span>
                     </div>
-                    <button onClick={handleConfirm} className="w-full btn-neon py-3.5 text-base">{t("confirm")}</button>
+                    <button onClick={handleConfirm} disabled={!!dateError}
+                      className="w-full btn-neon py-3.5 text-base disabled:opacity-50 disabled:cursor-not-allowed">{t("confirm")}</button>
                   </>
                 )}
               </>
