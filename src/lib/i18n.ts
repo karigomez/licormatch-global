@@ -38,6 +38,7 @@ export const TRANSLATIONS: Record<Lang, Dict> = {
     needLogin: "Inicia sesión para reservar", reserveNow: "Reservar ahora",
     perPerson: "/persona", releasing: "Liberando mesa…", integrityOk: "Integridad mantenida",
     seeMoreReserve: "Ver más detalles / Reservar", menu: "Menú destacado", gallery: "Galería", description: "Sobre el lugar", openHours: "Horario", back: "Atrás", startReservation: "Iniciar Reserva",
+    reviews: "Reseñas", yourRating: "Tu calificación", reviewPlaceholder: "Cuéntanos cómo estuvo tu noche…", sendReview: "Enviar reseña", syncingReview: "Sincronizando reseña con nodo regional…", reviewSent: "¡Reseña enviada!", loginToReview: "Inicia sesión para dejar tu reseña",
   },
   en: {
     explore: "Explore", map: "Map", reservations: "Bookings", profile: "Profile",
@@ -65,6 +66,7 @@ export const TRANSLATIONS: Record<Lang, Dict> = {
     needLogin: "Sign in to book", reserveNow: "Book now",
     perPerson: "/person", releasing: "Releasing table…", integrityOk: "Integrity maintained",
     seeMoreReserve: "See more details / Book", menu: "Featured menu", gallery: "Gallery", description: "About the venue", openHours: "Hours", back: "Back", startReservation: "Start Reservation",
+    reviews: "Reviews", yourRating: "Your rating", reviewPlaceholder: "Tell us how your night went…", sendReview: "Send review", syncingReview: "Syncing review with regional node…", reviewSent: "Review sent!", loginToReview: "Sign in to leave a review",
   },
   pt: {
     explore: "Explorar", map: "Mapa", reservations: "Reservas", profile: "Perfil",
@@ -92,6 +94,7 @@ export const TRANSLATIONS: Record<Lang, Dict> = {
     needLogin: "Entre para reservar", reserveNow: "Reservar agora",
     perPerson: "/pessoa", releasing: "Liberando mesa…", integrityOk: "Integridade mantida",
     seeMoreReserve: "Ver detalhes / Reservar", menu: "Menu destacado", gallery: "Galeria", description: "Sobre o lugar", openHours: "Horário", back: "Voltar", startReservation: "Iniciar Reserva",
+    reviews: "Avaliações", yourRating: "Sua avaliação", reviewPlaceholder: "Conte como foi sua noite…", sendReview: "Enviar avaliação", syncingReview: "Sincronizando avaliação com nó regional…", reviewSent: "Avaliação enviada!", loginToReview: "Entre para deixar uma avaliação",
   },
   it: {
     explore: "Esplora", map: "Mappa", reservations: "Prenotazioni", profile: "Profilo",
@@ -119,6 +122,7 @@ export const TRANSLATIONS: Record<Lang, Dict> = {
     needLogin: "Accedi per prenotare", reserveNow: "Prenota ora",
     perPerson: "/persona", releasing: "Rilascio tavolo…", integrityOk: "Integrità mantenuta",
     seeMoreReserve: "Vedi dettagli / Prenota", menu: "Menu in evidenza", gallery: "Galleria", description: "Sul locale", openHours: "Orari", back: "Indietro", startReservation: "Avvia Prenotazione",
+    reviews: "Recensioni", yourRating: "La tua valutazione", reviewPlaceholder: "Raccontaci com\'è andata la tua serata…", sendReview: "Invia recensione", syncingReview: "Sincronizzazione recensione con nodo regionale…", reviewSent: "Recensione inviata!", loginToReview: "Accedi per lasciare una recensione",
   },
   fr: {
     explore: "Explorer", map: "Carte", reservations: "Réservations", profile: "Profil",
@@ -146,6 +150,7 @@ export const TRANSLATIONS: Record<Lang, Dict> = {
     needLogin: "Connectez-vous pour réserver", reserveNow: "Réserver maintenant",
     perPerson: "/personne", releasing: "Libération de la table…", integrityOk: "Intégrité maintenue",
     seeMoreReserve: "Voir détails / Réserver", menu: "Menu phare", gallery: "Galerie", description: "À propos du lieu", openHours: "Horaires", back: "Retour", startReservation: "Démarrer la Réservation",
+    reviews: "Avis", yourRating: "Votre note", reviewPlaceholder: "Dites-nous comment s\'est passée votre soirée…", sendReview: "Envoyer l\'avis", syncingReview: "Synchronisation de l\'avis avec le nœud régional…", reviewSent: "Avis envoyé !", loginToReview: "Connectez-vous pour laisser un avis",
   },
 };
 
