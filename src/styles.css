@@ -146,8 +146,10 @@
 
 /* Neon cup pin */
 .bar-pin-wrap {
+  position: relative;
   width: 48px; height: 58px;
   display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
   filter: drop-shadow(0 0 10px oklch(0.68 0.27 305 / 0.85))
           drop-shadow(0 0 22px oklch(0.82 0.18 200 / 0.45));
   transition: transform 0.18s ease;
