@@ -110,6 +110,13 @@ function BarDetailPage() {
             ))}
           </div>
         </section>
+
+        {/* Reviews */}
+        <BarReviews
+          barId={bar.id}
+          fallbackRating={bar.rating}
+          onAverageChange={(avg) => setLiveRating(avg)}
+        />
       </div>
 
       {/* Sticky CTA */}
