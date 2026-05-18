@@ -55,7 +55,7 @@ function BarDetailPage() {
         </button>
         <div className="absolute bottom-4 left-4 right-4">
           <div className="flex items-center gap-2 text-xs text-[var(--neon-cyan)] mb-1">
-            <Star size={12} fill="currentColor" />{bar.rating}
+            <Star size={12} fill="currentColor" />{(liveRating ?? bar.rating).toFixed(1)}
             <span className="text-muted-foreground">·</span>
             <span className="text-muted-foreground flex items-center gap-1"><MapPin size={11} />{bar.city}, {COUNTRIES[bar.country].name}</span>
           </div>
