@@ -23,6 +23,7 @@ function BarDetailPage() {
   const { t, country, lang } = useLocale();
   const navigate = useNavigate();
   const [reserveOpen, setReserveOpen] = useState(false);
+  const [liveRating, setLiveRating] = useState<number | null>(null);
 
   const gallery = useMemo(() => buildGallery(bar), [bar]);
   const menu = useMemo(() => bar ? buildMenu(bar, country) : [], [bar, country]);
