@@ -16,7 +16,7 @@ export const Route = createFileRoute("/map")({ component: MapPage });
 const CITY_KEY = "lm_map_city";
 
 function MapPage() {
-  const { t, country } = useLocale();
+  const { t, country, lang } = useLocale();
   const cities = CITIES[country];
   const [city, setCity] = useState(() => {
     if (typeof window === "undefined") return cities[0].name;
