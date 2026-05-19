@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Languages } from "lucide-react";
 import { useLocale } from "@/lib/locale-context";
 import { COUNTRIES } from "@/lib/i18n";
 import { BARS, CITIES } from "@/lib/bars-data";
