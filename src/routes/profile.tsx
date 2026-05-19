@@ -64,6 +64,16 @@ function ProfilePage() {
           </div>
         </button>
 
+        <button onClick={()=>setLangDrawer(true)} className="w-full glass-card p-4 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{background:"oklch(0.2 0.06 295)"}}>
+            <Languages size={18} className="text-[var(--neon-pink)]"/>
+          </div>
+          <div className="flex-1 text-left">
+            <p className="text-xs text-muted-foreground">{t("language") !== "language" ? t("language") : "Idioma"}</p>
+            <p className="font-semibold">{LANG_LABEL[lang]?.flag} {LANG_LABEL[lang]?.native}</p>
+          </div>
+        </button>
+
         <Link to="/reservations" className="w-full glass-card p-4 flex items-center gap-3">
           <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{background:"oklch(0.2 0.06 295)"}}>
             <UserIcon size={18} className="text-[var(--neon-violet)]"/>
@@ -84,6 +94,7 @@ function ProfilePage() {
       </div>
 
       <CountryDrawer open={drawer} onClose={()=>setDrawer(false)} />
+      <LanguageDrawer open={langDrawer} onClose={()=>setLangDrawer(false)} />
     </div>
   );
 }
