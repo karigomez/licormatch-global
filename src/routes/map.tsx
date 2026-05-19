@@ -52,9 +52,13 @@ function MapPage() {
       {/* Top overlay */}
       <div className="absolute top-0 left-0 right-0 p-4 pt-10 pointer-events-none">
         <div className="flex gap-2 pointer-events-auto">
-          <button onClick={() => setDrawer(true)} className="glass-strong rounded-full px-3 py-2 flex items-center gap-2">
+          <button onClick={() => setDrawer(true)} className="glass-strong rounded-full px-3 py-2 flex items-center gap-2" aria-label="country">
             <span className="text-lg">{COUNTRIES[country].flag}</span>
             <ChevronDown size={14} />
+          </button>
+          <button onClick={() => setLangDrawer(true)} className="glass-strong rounded-full px-3 py-2 flex items-center gap-1.5 text-xs font-semibold" aria-label="language">
+            <Languages size={14} className="text-[var(--neon-pink)]"/>
+            <span>{lang.toUpperCase()}</span>
           </button>
           <div className="flex-1 flex gap-2 overflow-x-auto no-scrollbar">
             {cities.map(c => (
