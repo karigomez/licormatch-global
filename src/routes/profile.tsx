@@ -1,19 +1,29 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { LogOut, Globe, User as UserIcon, Mail } from "lucide-react";
+import { LogOut, Globe, User as UserIcon, Mail, Languages } from "lucide-react";
 import { useLocale } from "@/lib/locale-context";
 import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/integrations/supabase/client";
 import { COUNTRIES } from "@/lib/i18n";
 import { CountryDrawer } from "@/components/CountryDrawer";
+import { LanguageDrawer } from "@/components/LanguageDrawer";
 
 export const Route = createFileRoute("/profile")({ component: ProfilePage });
 
+const LANG_LABEL: Record<string, { native: string; flag: string }> = {
+  es: { native: "Español", flag: "🇪🇸" },
+  en: { native: "English", flag: "🇬🇧" },
+  pt: { native: "Português", flag: "🇧🇷" },
+  it: { native: "Italiano", flag: "🇮🇹" },
+  fr: { native: "Français", flag: "🇫🇷" },
+};
+
 function ProfilePage() {
-  const { t, country } = useLocale();
+  const { t, country, lang } = useLocale();
   const { user, signOut } = useAuth();
   const [name, setName] = useState<string>("");
   const [drawer, setDrawer] = useState(false);
+  const [langDrawer, setLangDrawer] = useState(false);
 
   useEffect(() => {
     if (!user) return;
