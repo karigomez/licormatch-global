@@ -24,6 +24,7 @@ function MapPage() {
     return saved && cities.some(c => c.name === saved) ? saved : cities[0].name;
   });
   const [drawer, setDrawer] = useState(false);
+  const [langDrawer, setLangDrawer] = useState(false);
   const [active, setActive] = useState<Bar | null>(null);
   const [barDrawerOpen, setBarDrawerOpen] = useState(false);
   const [reserveOpen, setReserveOpen] = useState(false);
