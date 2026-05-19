@@ -8,6 +8,7 @@ import { MapView } from "@/components/MapView";
 import { CountryDrawer } from "@/components/CountryDrawer";
 import { ReservationModal } from "@/components/ReservationModal";
 import { BarDrawer } from "@/components/BarDrawer";
+import { LanguageDrawer } from "@/components/LanguageDrawer";
 import type { Bar } from "@/lib/bars-data";
 
 export const Route = createFileRoute("/map")({ component: MapPage });
