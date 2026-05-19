@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Languages } from "lucide-react";
 import { useLocale } from "@/lib/locale-context";
 import { COUNTRIES } from "@/lib/i18n";
 import { BARS, CITIES } from "@/lib/bars-data";
@@ -8,6 +8,7 @@ import { MapView } from "@/components/MapView";
 import { CountryDrawer } from "@/components/CountryDrawer";
 import { ReservationModal } from "@/components/ReservationModal";
 import { BarDrawer } from "@/components/BarDrawer";
+import { LanguageDrawer } from "@/components/LanguageDrawer";
 import type { Bar } from "@/lib/bars-data";
 
 export const Route = createFileRoute("/map")({ component: MapPage });
@@ -15,7 +16,7 @@ export const Route = createFileRoute("/map")({ component: MapPage });
 const CITY_KEY = "lm_map_city";
 
 function MapPage() {
-  const { t, country } = useLocale();
+  const { t, country, lang } = useLocale();
   const cities = CITIES[country];
   const [city, setCity] = useState(() => {
     if (typeof window === "undefined") return cities[0].name;
@@ -23,6 +24,7 @@ function MapPage() {
     return saved && cities.some(c => c.name === saved) ? saved : cities[0].name;
   });
   const [drawer, setDrawer] = useState(false);
+  const [langDrawer, setLangDrawer] = useState(false);
   const [active, setActive] = useState<Bar | null>(null);
   const [barDrawerOpen, setBarDrawerOpen] = useState(false);
   const [reserveOpen, setReserveOpen] = useState(false);
@@ -50,9 +52,13 @@ function MapPage() {
       {/* Top overlay */}
       <div className="absolute top-0 left-0 right-0 p-4 pt-10 pointer-events-none">
         <div className="flex gap-2 pointer-events-auto">
-          <button onClick={() => setDrawer(true)} className="glass-strong rounded-full px-3 py-2 flex items-center gap-2">
+          <button onClick={() => setDrawer(true)} className="glass-strong rounded-full px-3 py-2 flex items-center gap-2" aria-label="country">
             <span className="text-lg">{COUNTRIES[country].flag}</span>
             <ChevronDown size={14} />
+          </button>
+          <button onClick={() => setLangDrawer(true)} className="glass-strong rounded-full px-3 py-2 flex items-center gap-1.5 text-xs font-semibold" aria-label="language">
+            <Languages size={14} className="text-[var(--neon-pink)]"/>
+            <span>{lang.toUpperCase()}</span>
           </button>
           <div className="flex-1 flex gap-2 overflow-x-auto no-scrollbar">
             {cities.map(c => (
@@ -79,6 +85,7 @@ function MapPage() {
       />
 
       <CountryDrawer open={drawer} onClose={() => setDrawer(false)} />
+      <LanguageDrawer open={langDrawer} onClose={() => setLangDrawer(false)} />
       <ReservationModal
         bar={active}
         open={reserveOpen}

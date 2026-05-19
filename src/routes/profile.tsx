@@ -1,19 +1,29 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { LogOut, Globe, User as UserIcon, Mail } from "lucide-react";
+import { LogOut, Globe, User as UserIcon, Mail, Languages } from "lucide-react";
 import { useLocale } from "@/lib/locale-context";
 import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/integrations/supabase/client";
 import { COUNTRIES } from "@/lib/i18n";
 import { CountryDrawer } from "@/components/CountryDrawer";
+import { LanguageDrawer } from "@/components/LanguageDrawer";
 
 export const Route = createFileRoute("/profile")({ component: ProfilePage });
 
+const LANG_LABEL: Record<string, { native: string; flag: string }> = {
+  es: { native: "Español", flag: "🇪🇸" },
+  en: { native: "English", flag: "🇬🇧" },
+  pt: { native: "Português", flag: "🇧🇷" },
+  it: { native: "Italiano", flag: "🇮🇹" },
+  fr: { native: "Français", flag: "🇫🇷" },
+};
+
 function ProfilePage() {
-  const { t, country } = useLocale();
+  const { t, country, lang } = useLocale();
   const { user, signOut } = useAuth();
   const [name, setName] = useState<string>("");
   const [drawer, setDrawer] = useState(false);
+  const [langDrawer, setLangDrawer] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -54,6 +64,16 @@ function ProfilePage() {
           </div>
         </button>
 
+        <button onClick={()=>setLangDrawer(true)} className="w-full glass-card p-4 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{background:"oklch(0.2 0.06 295)"}}>
+            <Languages size={18} className="text-[var(--neon-pink)]"/>
+          </div>
+          <div className="flex-1 text-left">
+            <p className="text-xs text-muted-foreground">{t("language") !== "language" ? t("language") : "Idioma"}</p>
+            <p className="font-semibold">{LANG_LABEL[lang]?.flag} {LANG_LABEL[lang]?.native}</p>
+          </div>
+        </button>
+
         <Link to="/reservations" className="w-full glass-card p-4 flex items-center gap-3">
           <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{background:"oklch(0.2 0.06 295)"}}>
             <UserIcon size={18} className="text-[var(--neon-violet)]"/>
@@ -74,6 +94,7 @@ function ProfilePage() {
       </div>
 
       <CountryDrawer open={drawer} onClose={()=>setDrawer(false)} />
+      <LanguageDrawer open={langDrawer} onClose={()=>setLangDrawer(false)} />
     </div>
   );
 }
