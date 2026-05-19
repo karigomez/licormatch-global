@@ -85,6 +85,7 @@ function MapPage() {
       />
 
       <CountryDrawer open={drawer} onClose={() => setDrawer(false)} />
+      <LanguageDrawer open={langDrawer} onClose={() => setLangDrawer(false)} />
       <ReservationModal
         bar={active}
         open={reserveOpen}
